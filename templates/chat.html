@@ -1,0 +1,80 @@
+=<!-- chat.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+        .user-message {
+            color: blue;
+        }
+        .response-message {
+            color: green;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chat</h1>
+        <div class="messages">
+            <p class="user-message">User: <span id="user-message"></span></p>
+            <p class="response-message">Response: <span id="response-message"></span></p>
+        </div>
+        <input type="text" id="input-message" placeholder="Type your message..." autofocus>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputMessage = document.getElementById('input-message');
+            const userMessage = document.getElementById('user-message');
+            const responseMessage = document.getElementById('response-message');
+
+            inputMessage.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    const message = inputMessage.value;
+                    userMessage.textContent = message;
+
+                    // Send the message to the server and get the response
+                    fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message: message })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        responseMessage.textContent = data.response;
+                        inputMessage.value = '';
+
+                        // Scroll to the bottom of the messages
+                        responseMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>e
